@@ -10,6 +10,7 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 int x = 0, y = 0;
 int* choosing;
 int* ticket;
+
 int max(int* ticket, int n)
 {
     int i;
@@ -46,6 +47,8 @@ int check_ticket(int j, int i)
 void acquire(int *id)
 {
     int j = 0;
+
+
     choosing[*id] = 1;
     asm("mfence":::"memory");
     ticket[*id] = max(ticket,num_threads*16) + 1;
@@ -102,7 +105,7 @@ int main(int argc, char* argv[])
 	// private_sum = (double*)malloc(num_threads*sizeof(double));
 	id = (int*)malloc(num_threads*sizeof(int));
  	for (i=0; i<num_threads; i++) 
-        id[i] = i;
+        id[i] = i * 16;
     choosing = (int*)malloc(num_threads*16*sizeof(int));
     ticket = (int*)malloc(num_threads*16*sizeof(int));
     for(i=0;i<num_threads*16;i+=16)
